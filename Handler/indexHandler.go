@@ -7,7 +7,7 @@ import (
 )
 
 func Index(context *gin.Context)  {
-	context.HTML(http.StatusOK,"tes",gin.H{
+	context.HTML(http.StatusOK,"user/index",gin.H{
 		"title": "hello gin " + strings.ToLower(context.Request.Method) + " method",
 	})
 }

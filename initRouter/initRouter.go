@@ -1,23 +1,29 @@
 package initRouter
 
 import (
-	"gin_do/Handler"
+	"gin_admin_real/Handler"
+	"gin_admin_real/middleware"
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"net/http"
-
 )
 
 func SetupRouter() *gin.Engine {
-	router := gin.Default()
 
-
+	router := gin.New()
+	router.Use(middleware.Logger(),gin.Recovery())
 	router.LoadHTMLGlob("templates/**/*")
-	router.LoadHTMLFiles("templates/test.tmpl","templates/ab.tmpl")
+	//router.LoadHTMLFiles("templates/test.tmpl","templates/ab.tmpl")
 
 	router.Static("/statics","./statics")
 
+
+	url := ginSwagger.URL("http://localhost:8080/swagger/doc.json")
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))
+
 	// 添加 Get 请求路由
-	router.GET("/", Handler.Index)
+	router.GET("/", middleware.SetCookie(), middleware.Auth(), Handler.Index)
 
 	// 添加 Post 请求路由
 	router.POST("/post", fmtResponse)
@@ -44,6 +50,7 @@ func SetupRouter() *gin.Engine {
 	{
 		user.GET("/save/:name",Handler.UseSave)
 		user.GET("/saveQuery",Handler.UserQuerySave)
+		user.POST("/register",Handler.UserRegister)
 	}
 
 	return router
