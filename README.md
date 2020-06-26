@@ -1,1 +1,1 @@
-# gin_admin_real
+# 使用go框架gin搭建后台管理系统
